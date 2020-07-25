@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import time
 
+from utils import *
+
 class MainWindow(QMainWindow):
 	def __init__(self):
 		QMainWindow.__init__(self)
@@ -28,26 +30,23 @@ class MainWindow(QMainWindow):
 
 		self.mouse_start_pos = None
 		self.mouse_curr_pos = None
+		self.coords = None
 		print('Done')
 
 	def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+		self.coords = (self.mouse_start_pos, self.mouse_curr_pos)
+
 		self.mouse_start_pos = None
-		QtWidgets.qApp.quit()
+		self.mouse_curr_pos = None
 
 	def mousePressEvent(self, event: QtGui.QMouseEvent):
+		if event.button() == 2:
+			take_screenshot(self.coords[0], self.coords[1])
+			return
+
 		if self.mouse_start_pos is None:
 			self.mouse_start_pos = event.pos()
-
-
-		# painter = QPainter(self)
-		# painter.setBrush()
-		# painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
-		# painter.drawLine(200, 200, 400, 400)
 		self.update()
-
-		print('mouseclick')
-		# time.sleep(4)
-		# QtWidgets.qApp.quit()
 
 	def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
 		if self.mouse_start_pos is None:
@@ -61,21 +60,22 @@ class MainWindow(QMainWindow):
 
 		if self.mouse_start_pos is not None and self.mouse_curr_pos is not None:
 			qp.drawRect(QRect(self.mouse_start_pos.x(), self.mouse_start_pos.y(),
-							  # self.mouse_start_pos.x()+1, self.mouse_start_pos.y()+1))
 							  self.mouse_curr_pos.x()-self.mouse_start_pos.x(),
 							  self.mouse_curr_pos.y()-self.mouse_start_pos.y()))
 
-			print(self.mouse_start_pos.x(), self.mouse_start_pos.y(),
-				   self.mouse_curr_pos.x(), self.mouse_curr_pos.y())
+			print('start:', (self.mouse_start_pos.x(), self.mouse_start_pos.y()),
+				   '\tend:', (self.mouse_curr_pos.x(), self.mouse_curr_pos.y()))
+		else:
+			qp.eraseRect(0, 0, self.screen().size().width(), self.screen().size().width())
+
 		qp.end()
 
-
-		# print('paintevent')
-		# time.sleep(4)
-		# QtWidgets.qApp.quit()
+	def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
+		print('Double click -> exiting')
+		QtWidgets.qApp.quit()
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	mywindow = MainWindow()
-	mywindow.show()
+	window = MainWindow()
+	window.show()
 	app.exec_()
