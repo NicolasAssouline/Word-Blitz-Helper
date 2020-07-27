@@ -40,8 +40,9 @@ class MainWindow(QMainWindow):
 		self.mouse_curr_pos = None
 
 	def mousePressEvent(self, event: QtGui.QMouseEvent):
-		if event.button() == 2:
-			take_screenshot(self.coords[0], self.coords[1])
+		if event.button() == 2: # desni klik
+			# take_screenshot(self.coords[0], self.coords[1])
+			analyze(None)
 			return
 
 		if self.mouse_start_pos is None:
