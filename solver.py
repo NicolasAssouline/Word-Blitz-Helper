@@ -39,7 +39,7 @@ def solve_blitz(board: List[List[str]], word_dictionary:set=None):
 	word_dictionary = list(filter(lambda entry: all([letter in letters_in_board for letter in entry]), word_dictionary))
 
 	print('Words found in board')
-	for word in sorted(word_dictionary, key=len, reverse=True): # try to find the highest value words first
+	for word in sorted(word_dictionary, key=len):
 		path = find_word_in_board(board, word)
 
 		if path is not None:

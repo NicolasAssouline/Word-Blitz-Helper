@@ -19,7 +19,7 @@ def take_screenshot(start, end):
 				end.x()-start.x(), end.y()-start.y()
 			))
 		else:
-
+			# todo fix multi monitor screenshots
 			mon = sct.monitors[monitor_number]
 
 			# The screen part to capture
