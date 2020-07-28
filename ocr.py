@@ -11,8 +11,6 @@ replacements = {
 }
 
 def extract_text_from_board(img, debug=False):
-	# img = cv2.imread(in_file)
-
 	pre_processed = pre_process_image(img)
 	if debug: cv2.imwrite(os.path.join(debug_output_dir, 'grid_mask.png'), pre_processed)
 
