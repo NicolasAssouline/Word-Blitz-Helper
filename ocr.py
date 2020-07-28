@@ -1,12 +1,25 @@
+import os
+
 import cv2
 import pytesseract
 
+debug_output_dir = './debug_outputs'
+if not os.path.exists(debug_output_dir): os.mkdir(debug_output_dir)
 
-def extract_text_from_board(img):
+replacements = {
+	'°': 'O'
+}
+
+def extract_text_from_board(img, debug=False):
 	# img = cv2.imread(in_file)
 
 	pre_processed = pre_process_image(img)
+	if debug: cv2.imwrite(os.path.join(debug_output_dir, 'grid_mask.png'), pre_processed)
+
 	text_boxes = find_text_boxes(pre_processed)
+	if len(text_boxes) != 16:
+		print('Cannot recognize board, try again, ({})'.format(len(text_boxes)))
+		return None
 
 	# must be done this way because the cells are not at the same y height
 	# sort by rows
@@ -24,17 +37,29 @@ def extract_text_from_board(img):
 		column.sort(key=lambda col: col[0])
 
 	final_table = []
-	for col in columns:
+	for i in range(len(columns)):
 		final_table.append([])
-		for cell in col:
-			x, y, w, h = cell
-			image = img[y - 2:y + h, x + 20:x + w - 15]
+		for j in range(len(columns[i])):
+			x, y, w, h = columns[i][j]
+			image = img[y:y + h, x + 20:x + w - 15]
+
+			if debug:
+				cv2.imwrite(os.path.join(debug_output_dir, 'row_{}_col_{}.png'.format(i, j)), image)
 
 			# select the first one in case it detects more than one letter by accident
 			final_table[-1].append(pytesseract.image_to_string(image, config='--psm 10')[0].upper())
+
+	replace_common_mistakes(final_table)
 	return final_table
 
-def pre_process_image(img, morph_size=(23, 23)):
+
+def replace_common_mistakes(final_table):
+	for i in range(len(final_table)):
+		for j in range(len(final_table[i])):
+			if final_table[i][j] in replacements.keys():
+				final_table[i][j] = replacements[final_table[i][j]]
+
+def pre_process_image(img, morph_size=(5, 5)):
 	# get rid of the color
 	pre = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	pre = cv2.threshold(pre, 250, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]

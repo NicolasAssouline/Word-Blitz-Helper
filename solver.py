@@ -20,31 +20,32 @@ def find_word_in_board(board, word, curr_pos=None, visited=None):
 		return visited
 
 	curr_x, curr_y = curr_pos
-	for i in range(min(0, curr_x-1), max(3, curr_x+1)):
-		for j in range(min(0, curr_y-1), max(3, curr_y+1)):
+	for i in range(max(0, curr_x-1), min(3, curr_x+1)+1):
+		for j in range(max(0, curr_y-1), min(3, curr_y+1)+1):
 			if board[i][j] == word[0] and (i, j) not in visited:
 				visited.append((i, j))
-				return find_word_in_board(board, word[1:], (i, j), visited)
+				return find_word_in_board(board, word[1:], (i, j), visited.copy())
 	return None
 
 
 def solve_blitz(board: List[List[str]], word_dictionary:set=None):
 	if word_dictionary is None:
 		word_dictionary = load_dictionary()
+	word_dictionary = [word.upper() for word in word_dictionary]
 
 	letters_in_board = set([item for sublist in board for item in sublist])
 
 	# pre-filter the dictionary to the set of all possible words
-	word_dictionary = filter(lambda entry: all([letter in letters_in_board for letter in entry.lower()]), word_dictionary)
+	word_dictionary = list(filter(lambda entry: all([letter in letters_in_board for letter in entry]), word_dictionary))
 
 	print('Words found in board')
-	for word in sorted(word_dictionary, key=len):
+	for word in sorted(word_dictionary, key=len, reverse=True): # try to find the highest value words first
 		path = find_word_in_board(board, word)
 
 		if path is not None:
 			print(word, '\tpath =', path)
 
-	print('Scan complete')
+	print('\nScan complete')
 
 if __name__ == '__main__':
 	board = [

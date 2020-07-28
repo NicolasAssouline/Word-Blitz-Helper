@@ -43,10 +43,20 @@ class MainWindow(QMainWindow):
 
 	def mousePressEvent(self, event: QtGui.QMouseEvent):
 		if event.button() == 2: # desni klik
+			if self.coords is None or self.coords[0] is None: return
+
 			image = take_screenshot(self.coords[0], self.coords[1])
-			grid = extract_text_from_board(image)
+			grid = extract_text_from_board(image, debug=True)
+			if grid is None: return
+
+			print('\nDetected grid:')
+			for row in grid:
+				for letter in row:
+					print(letter, end=' ')
+				print()
+
 			solve_blitz(grid)
-			return
+			QtWidgets.qApp.quit()
 
 		if self.mouse_start_pos is None:
 			self.mouse_start_pos = event.pos()
