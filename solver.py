@@ -45,7 +45,7 @@ def solve_blitz(board: List[List[str]], word_dictionary:set=None):
 
 		if path is not None:
 			found_count += 1
-			print('{:18}'.format(word), 'path =', path)
+			print('{:17}'.format(word), 'path =', path)
 
 	print('\nWords found:', found_count)
 

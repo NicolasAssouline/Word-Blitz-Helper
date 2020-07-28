@@ -37,19 +37,9 @@ def take_screenshot(start, end):
 			image = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 	image = numpy.array(image)
 	image = image[:, :, ::-1].copy()
-	cv2.imshow('bla', image)
+	# cv2.imshow('screenshot', image)
 	return image
 
-# def analyze(image):
-# 	img = cv2.imread('/home/nicolas/Pictures/Screenshot from 2020-07-25 13-28-10.png')
-# 	# img = cv2.imread('/home/nicolas/Desktop/FAKS/MISC PROGRAMI/WORD_BLITZ_HELPER/testocr.png')
-# 	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# 	cv2.imshow('bla', img)
-# 	print('analyzing')
-# 	text = pytesseract.image_to_string(img)
-# 	print('len:', 2, '\t', text)
-# 	time.sleep(2)
-
-def load_dictionary(dictionary_path='./corncob_caps.txt'):
+def load_dictionary(dictionary_path='./dictionaries/corncob_caps.txt'):
 	with open(dictionary_path) as file:
 		return [word.strip() for word in file.readlines() if 1 < len(word.strip()) <= 16]

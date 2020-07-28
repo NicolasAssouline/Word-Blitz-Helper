@@ -1,16 +1,15 @@
 import sys
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt, QRect
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPainter, QBrush
+from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from ocr import *
-import time
-
 from solver import solve_blitz
 from utils import *
+
 
 class MainWindow(QMainWindow):
 	def __init__(self):
@@ -33,7 +32,7 @@ class MainWindow(QMainWindow):
 		self.mouse_start_pos = None
 		self.mouse_curr_pos = None
 		self.coords = None
-		print('Done')
+		# print('Gui setup done')
 
 	def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
 		self.coords = (self.mouse_start_pos, self.mouse_curr_pos)
@@ -42,7 +41,7 @@ class MainWindow(QMainWindow):
 		self.mouse_curr_pos = None
 
 	def mousePressEvent(self, event: QtGui.QMouseEvent):
-		if event.button() == 2: # desni klik
+		if event.button() == 2: # right click
 			if self.coords is None or self.coords[0] is None: return
 
 			image = take_screenshot(self.coords[0], self.coords[1])
