@@ -5,6 +5,7 @@ import pytesseract
 
 from utils import analyze
 
+# https://stackoverflow.com/questions/50829874/how-to-find-table-like-structure-in-image/51756462#51756462
 # analyze(None)
 
 # This only works if there's only one table on a page
@@ -109,13 +110,38 @@ if __name__ == "__main__":
 
 	pre_processed = pre_process_image(img, pre_file)
 	text_boxes = find_text_boxes(pre_processed)
-	cells = find_table_in_boxes(text_boxes)
-	hor_lines, ver_lines = build_lines(cells)
+	# cells = find_table_in_boxes(text_boxes)
+	# hor_lines, ver_lines = build_lines(cells)
 
 	# Visualize the result
 	vis = img.copy()
 
-	cv2.imwrite('./bla-1.png', vis)
+	cv2.imwrite('./out.png', vis)
+	cells_copy = text_boxes.copy()
+
+
+	# must be done this way because the cells are not at the same y height
+	# sort by rows
+	columns = []
+	for i in range(4):
+		columns.append([])
+		for cell in sorted(cells_copy, key=lambda cell: cell[1]):
+			columns[-1].append(cell)
+			if len(columns[-1]) == 4: break
+		for cell in columns[-1]:
+			cells_copy.remove(cell)
+
+	# sort by columns
+	for column in columns:
+		column.sort(key=lambda col: col[0])
+
+
+	for col in columns:
+		for cell in col:
+			x, y, w, h = cell
+			image = vis[y - 2:y + h, x + 20:x + w - 15]
+			print(pytesseract.image_to_string(image, config='--psm 10'), end=' ')
+		print()
 
 	print('boxes:', len(text_boxes))
 	for i, cell in enumerate(text_boxes):
@@ -124,9 +150,9 @@ if __name__ == "__main__":
 		cv2.imwrite('./bla{}.png'.format(i), image)
 		print(pytesseract.image_to_string(image, config='--psm 10'))
 
-	for box in text_boxes:
-		(x, y, w, h) = box
-		cv2.rectangle(vis, (x, y), (x + w - 2, y + h - 2), (0, 255, 0), 1)
+	# for box in text_boxes:
+	# 	(x, y, w, h) = box
+	# 	cv2.rectangle(vis, (x, y), (x + w - 2, y + h - 2), (0, 255, 0), 1)
 
 	# for line in hor_lines:
 	# 	[x1, y1, x2, y2] = line
