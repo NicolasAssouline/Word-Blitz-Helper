@@ -106,12 +106,10 @@ if __name__ == "__main__":
 	pre_file = 'pre.png'
 	out_file = os.path.join(".", "out.png")
 
-	img = cv2.imread(os.path.join(in_file))
+	img = cv2.imread(in_file)
 
 	pre_processed = pre_process_image(img, pre_file)
 	text_boxes = find_text_boxes(pre_processed)
-	# cells = find_table_in_boxes(text_boxes)
-	# hor_lines, ver_lines = build_lines(cells)
 
 	# Visualize the result
 	vis = img.copy()
@@ -135,20 +133,26 @@ if __name__ == "__main__":
 	for column in columns:
 		column.sort(key=lambda col: col[0])
 
-
+	print('Detected board state:')
+	final_table = []
 	for col in columns:
+		final_table.append([])
 		for cell in col:
 			x, y, w, h = cell
-			image = vis[y - 2:y + h, x + 20:x + w - 15]
-			print(pytesseract.image_to_string(image, config='--psm 10'), end=' ')
+			image = img[y - 2:y + h, x + 20:x + w - 15]
+
+			detected = pytesseract.image_to_string(image, config='--psm 10')[0] # in case it detects more than one letter by accident
+			final_table[-1].append(detected)
+
+			print(detected, end=' ')
 		print()
 
-	print('boxes:', len(text_boxes))
-	for i, cell in enumerate(text_boxes):
-		x, y, w, h = cell
-		image = vis[y-2:y + h, x+20:x + w-15]
-		cv2.imwrite('./bla{}.png'.format(i), image)
-		print(pytesseract.image_to_string(image, config='--psm 10'))
+	# print('boxes:', len(text_boxes))
+	# for i, cell in enumerate(text_boxes):
+	# 	x, y, w, h = cell
+	# 	image = vis[y-2:y + h, x+20:x + w-15]
+	# 	cv2.imwrite('./bla{}.png'.format(i), image)
+	# 	print(pytesseract.image_to_string(image, config='--psm 10'))
 
 	# for box in text_boxes:
 	# 	(x, y, w, h) = box
@@ -162,5 +166,5 @@ if __name__ == "__main__":
 	# 	[x1, y1, x2, y2] = line
 	# 	cv2.line(vis, (x1, y1), (x2, y2), (0, 0, 255), 1)
 
-	cv2.imwrite('./bla.png', vis)
-	cv2.waitKey(0)
+	# cv2.imwrite('./bla.png', img)
+	# cv2.waitKey(0)
