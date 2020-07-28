@@ -42,7 +42,7 @@ def take_screenshot(start, end):
 
 # def analyze(image):
 # 	img = cv2.imread('/home/nicolas/Pictures/Screenshot from 2020-07-25 13-28-10.png')
-# 	# img = cv2.imread('/home/nicolas/Desktop/FAKS/MISC PROGRAMI/WORD_BLITZ_CHEAT/testocr.png')
+# 	# img = cv2.imread('/home/nicolas/Desktop/FAKS/MISC PROGRAMI/WORD_BLITZ_HELPER/testocr.png')
 # 	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # 	cv2.imshow('bla', img)
 # 	print('analyzing')

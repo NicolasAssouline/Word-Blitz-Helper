@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
 			if self.coords is None or self.coords[0] is None: return
 
 			image = take_screenshot(self.coords[0], self.coords[1])
-			grid = extract_text_from_board(image, debug=True)
+			grid = extract_text_from_board(image, debug=False)
 			if grid is None: return
 
 			print('\nDetected grid:')
@@ -77,8 +77,8 @@ class MainWindow(QMainWindow):
 							  self.mouse_curr_pos.x()-self.mouse_start_pos.x(),
 							  self.mouse_curr_pos.y()-self.mouse_start_pos.y()))
 
-			print('start:', (self.mouse_start_pos.x(), self.mouse_start_pos.y()),
-				   '\tend:', (self.mouse_curr_pos.x(), self.mouse_curr_pos.y()))
+			# print('start:', (self.mouse_start_pos.x(), self.mouse_start_pos.y()),
+			# 	   '\tend:', (self.mouse_curr_pos.x(), self.mouse_curr_pos.y()))
 		else:
 			qp.eraseRect(0, 0, self.screen().size().width(), self.screen().size().width())
 

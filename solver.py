@@ -38,14 +38,16 @@ def solve_blitz(board: List[List[str]], word_dictionary:set=None):
 	# pre-filter the dictionary to the set of all possible words
 	word_dictionary = filter(lambda entry: all([letter in letters_in_board for letter in entry]), word_dictionary)
 
-	print('Words found in board')
+	found_count = 0
+	print('\nWords present on the board:')
 	for word in sorted(word_dictionary, key=len):
 		path = find_word_in_board(board, word)
 
 		if path is not None:
-			print(word, '\tpath =', path)
+			found_count += 1
+			print('{:18}'.format(word), 'path =', path)
 
-	print('\nScan complete')
+	print('\nWords found:', found_count)
 
 
 # test
