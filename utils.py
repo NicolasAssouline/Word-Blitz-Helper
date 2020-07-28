@@ -25,26 +25,24 @@ def take_screenshot(start, end):
 			"mon": monitor_number,
 		}
 
-		print(monitor)
+		print('Screenshot using monitor', monitor)
 		sct_img = sct.grab(monitor)
 		image = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 
 	image = numpy.array(image)
 	image = image[:, :, ::-1].copy()
 	cv2.imshow('bla', image)
-	analyze(image)
+	return image
 
-def analyze(image):
-	img = cv2.imread('/home/nicolas/Pictures/Screenshot from 2020-07-25 13-28-10.png')
-	# img = cv2.imread('/home/nicolas/Desktop/FAKS/MISC PROGRAMI/WORD_BLITZ_CHEAT/testocr.png')
-	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	cv2.imshow('bla', img)
-	print('analyzing')
-	text = pytesseract.image_to_string(img)
-	print('len:', 2, '\t', text)
-	time.sleep(2)
+# def analyze(image):
+# 	img = cv2.imread('/home/nicolas/Pictures/Screenshot from 2020-07-25 13-28-10.png')
+# 	# img = cv2.imread('/home/nicolas/Desktop/FAKS/MISC PROGRAMI/WORD_BLITZ_CHEAT/testocr.png')
+# 	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# 	cv2.imshow('bla', img)
+# 	print('analyzing')
+# 	text = pytesseract.image_to_string(img)
+# 	print('len:', 2, '\t', text)
+# 	time.sleep(2)
 
-def analyze2():
-	import os
-	import cv2
-
+def load_dictionary(dictionary_path='./dictionary.txt'):
+	return {} # todo

@@ -6,8 +6,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPainter, QBrush
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
+from ocr import *
 import time
 
+from solver import solve_blitz
 from utils import *
 
 class MainWindow(QMainWindow):
@@ -41,8 +43,9 @@ class MainWindow(QMainWindow):
 
 	def mousePressEvent(self, event: QtGui.QMouseEvent):
 		if event.button() == 2: # desni klik
-			# take_screenshot(self.coords[0], self.coords[1])
-			analyze(None)
+			image = take_screenshot(self.coords[0], self.coords[1])
+			grid = extract_text_from_board(image)
+			solve_blitz(grid)
 			return
 
 		if self.mouse_start_pos is None:
