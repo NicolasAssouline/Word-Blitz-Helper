@@ -24,14 +24,14 @@ def take_screenshot(start, end):
 
 			# The screen part to capture
 			monitor = {
-				"top": mon["top"] + start.x(),  # 100px from the top
-				"left": mon["left"] + start.y(),  # 100px from the left
+				"top": mon["top"] + start.x(),
+				"left": mon["left"] + start.y(),
 				"width": end.x() - start.x(),
 				"height": end.y() - start.y(),
 				"mon": monitor_number,
 			}
 
-			print('Screenshot using monitor', monitor)
+			print('Screenshot taken using monitor', monitor)
 			sct_img = sct.grab(monitor)
 
 			image = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
