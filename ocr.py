@@ -7,7 +7,8 @@ debug_output_dir = './debug_outputs'
 
 replacements = {
 	'°': 'O',
-	'3': 'J'
+	'3': 'J',
+	'1': 'I'
 }
 
 
