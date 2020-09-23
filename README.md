@@ -1,9 +1,7 @@
 # WORD BLITZ HELPER
 > A simple app that automagically detects and solves a word blitz
 
-
-
-## USAGE
+![demo-gif](https://raw.githubusercontent.com/NicolasAssouline/Word-Blitz-Helper/master/demo/results.gif)
 
 ## INSTALLATION
 ```
@@ -11,13 +9,15 @@ $ git clone https://github.com/NicolasAssouline/Word-Blitz-Helper.git
 $ cd Word-Blitz-Helper
 $ pip install -r requirements.txt
 ```
+
+## USAGE
 Start the app with the command
 ```
 $ python app.py
 ```
-then follow the instructions on the screen
+then follow the instructions on the screen  
 
-#####Additional requirements:
+###### Additional requirements:
 - qt5-default, tesseract, scrot
 
 > Note:
