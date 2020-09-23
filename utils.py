@@ -44,6 +44,7 @@ def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
                 print('Keyboard interrupt -> stopping execution...')
                 return
 
+
 def take_screenshot(start, end):
     with mss.mss() as sct:
         monitor_number = 1

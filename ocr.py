@@ -21,7 +21,7 @@ def extract_text_from_board(img, verbose=False):
 		print('Cannot recognize board, try again, ({} cells detected)'.format(len(text_boxes)))
 		return None
 
-	# must be done this way because the cells are not at the same y height
+	# must be done this way because the detected cells do not necessarily have the same y height
 	# sort by rows
 	columns = []
 	for i in range(4):
