@@ -1,7 +1,7 @@
 # WORD BLITZ HELPER
 > A simple app that automagically detects and solves a word blitz
 
-![demo-gif](https://raw.githubusercontent.com/NicolasAssouline/Word-Blitz-Helper/master/demo/results.gif)
+![demo-gif](https://raw.githubusercontent.com/NicolasAssouline/Word-Blitz-Helper/master/demo/results-screen.gif)
 
 ## INSTALLATION
 ```
