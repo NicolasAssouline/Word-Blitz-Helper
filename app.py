@@ -1,10 +1,9 @@
 import sys
 
-from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtCore import QRect, Qt, QSize
+from PyQt5.QtGui import QPainter, QMouseEvent, QPaintEvent
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, qApp
 
 import utils
 from ocr import *
@@ -15,35 +14,25 @@ from utils import *
 class MainWindow(QMainWindow):
 	def __init__(self):
 		QMainWindow.__init__(self)
-		self.setWindowFlags(
-			QtCore.Qt.WindowStaysOnTopHint |
-			QtCore.Qt.FramelessWindowHint |
-			QtCore.Qt.X11BypassWindowManagerHint
-		)
-
 		self.screenHeight = QtWidgets.qApp.primaryScreen().size().height()
 		self.screenWidth = QtWidgets.qApp.primaryScreen().size().width()
-		self.setGeometry(
-			QtWidgets.QStyle.alignedRect(
-				QtCore.Qt.LeftToRight, QtCore.Qt.AlignLeft,
-				QtCore.QSize(self.screenWidth, self.screenWidth),
-				QtWidgets.qApp.desktop().availableGeometry()
-		))
+		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+
+		self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignLeft, QSize(self.screenWidth, self.screenWidth), qApp.desktop().availableGeometry()))
 		QMainWindow.setWindowOpacity(self, 0.5)
 
 		self.mouse_start_pos = None
 		self.mouse_curr_pos = None
 		self.coords = None
-		# print('Gui setup done')
 
-	def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+	def mouseReleaseEvent(self, event: QMouseEvent) -> None:
 		self.coords = (self.mouse_start_pos, self.mouse_curr_pos)
 
 		self.mouse_start_pos = None
 		self.mouse_curr_pos = None
 
-	def mousePressEvent(self, event: QtGui.QMouseEvent):
-		if event.button() == 2: # right click
+	def mousePressEvent(self, event: QMouseEvent):
+		if event.button() == 2:  # right click
 			if self.coords is None or self.coords[0] is None: return
 			self.window().close()
 
@@ -76,13 +65,13 @@ class MainWindow(QMainWindow):
 			self.mouse_start_pos = event.pos()
 		self.update()
 
-	def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+	def mouseMoveEvent(self, event: QMouseEvent) -> None:
 		if self.mouse_start_pos is None:
 			self.mouse_start_pos = event.pos()
 		self.mouse_curr_pos = event.pos()
 		self.update()
 
-	def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+	def paintEvent(self, event: QPaintEvent) -> None:
 		qp = QPainter()
 		qp.begin(self)
 
@@ -98,7 +87,7 @@ class MainWindow(QMainWindow):
 
 		qp.end()
 
-	def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
+	def mouseDoubleClickEvent(self, a0: QMouseEvent) -> None:
 		print('Double click -> exiting')
 		QtWidgets.qApp.quit()
 

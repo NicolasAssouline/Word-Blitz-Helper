@@ -6,6 +6,7 @@ import mss.tools
 import numpy
 import pyautogui
 from PIL import Image
+from pynput import keyboard
 
 welcome_message = """
 |  |  __   __   __     __        ___ ___         __      __   __  __
@@ -16,25 +17,31 @@ Usage:
 Drag a rectangle around the word grid (approximately, doesn't have to be exact)
 then right click to start the recognition process
 
-Double click to exit the selection screen
+Double click or press escape to exit the selection screen
+To cancel the automatic solution input, press escape to terminate execution
 """
 
 
 def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
-    for path in reversed(paths):  # start from the longest word
 
-        start = path.pop(0)
-        pyautogui.moveTo(*coordinates[start[0]][start[1]], duration=0.1)
-        print('moved cursor to ', *coordinates[start[0]][start[1]])
+    with keyboard.Listener(on_press=lambda key: False, on_release=lambda key: False) as listener:
+        for path in reversed(paths):  # start from the longest word
 
-        pyautogui.mouseDown()
-        for coords in path:
-            pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=0.1)
-            print('moved cursor to ', *coordinates[coords[0]][coords[1]])
+            start = path.pop(0)
+            pyautogui.moveTo(*coordinates[start[0]][start[1]], duration=0.1)
+            # print('moved cursor to ', *coordinates[start[0]][start[1]])
 
-        pyautogui.mouseUp()
-        time.sleep(0.1)
+            pyautogui.mouseDown()
+            for coords in path:
+                pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=0.1)
+                # print('moved cursor to ', *coordinates[coords[0]][coords[1]])
 
+            pyautogui.mouseUp()
+            time.sleep(0.1)
+
+            if not listener.running:
+                print('Keyboard interrupt -> stopping execution...')
+                return
 
 def take_screenshot(start, end):
     with mss.mss() as sct:
