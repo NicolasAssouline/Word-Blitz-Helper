@@ -24,7 +24,8 @@ To cancel the automatic solution input, press escape to terminate execution
 
 def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
 
-    with keyboard.Listener(on_press=lambda key: False, on_release=lambda key: False) as listener:
+    with keyboard.Listener(on_press=lambda key: False,
+                           on_release=lambda key: False) as listener:
         for path in reversed(paths):  # start from the longest word
 
             start = path.pop(0)
@@ -42,6 +43,7 @@ def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
             if not listener.running:
                 print('Keyboard interrupt -> stopping execution...')
                 return
+
 
 def take_screenshot(start, end):
     with mss.mss() as sct:
