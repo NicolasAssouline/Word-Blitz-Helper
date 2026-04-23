@@ -1,9 +1,8 @@
 import sys
 
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QRect, Qt, QSize
-from PyQt5.QtGui import QPainter, QMouseEvent, QPaintEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, qApp
+from PyQt6.QtCore import QRect, Qt, QSize
+from PyQt6.QtGui import QPainter, QMouseEvent, QPaintEvent
+from PyQt6.QtWidgets import QMainWindow, QApplication, QStyle
 
 import utils
 from ocr import *
@@ -14,11 +13,11 @@ from utils import *
 class MainWindow(QMainWindow):
 	def __init__(self):
 		QMainWindow.__init__(self)
-		self.screenHeight = QtWidgets.qApp.primaryScreen().size().height()
-		self.screenWidth = QtWidgets.qApp.primaryScreen().size().width()
-		self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint)
+		self.screenHeight = QApplication.primaryScreen().size().height()
+		self.screenWidth = QApplication.primaryScreen().size().width()
+		self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint | Qt.WindowType.X11BypassWindowManagerHint)
 
-		self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignLeft, QSize(self.screenWidth, self.screenWidth), qApp.desktop().availableGeometry()))
+		self.setGeometry(QStyle.alignedRect(Qt.LayoutDirection.LeftToRight, Qt.AlignmentFlag.AlignLeft, QSize(self.screenWidth, self.screenWidth), QApplication.primaryScreen().availableGeometry()))
 		QMainWindow.setWindowOpacity(self, 0.5)
 
 		self.mouse_start_pos = None
@@ -32,7 +31,7 @@ class MainWindow(QMainWindow):
 		self.mouse_curr_pos = None
 
 	def mousePressEvent(self, event: QMouseEvent):
-		if event.button() == 2:  # right click
+		if event.button() == Qt.MouseButton.RightButton:
 			if self.coords is None or self.coords[0] is None: return
 			self.window().close()
 
@@ -59,7 +58,7 @@ class MainWindow(QMainWindow):
 
 			click_paths(coordinates, paths)
 
-			QtWidgets.qApp.quit()
+			QApplication.instance().quit()
 
 		if self.mouse_start_pos is None:
 			self.mouse_start_pos = event.pos()
@@ -89,7 +88,7 @@ class MainWindow(QMainWindow):
 
 	def mouseDoubleClickEvent(self, a0: QMouseEvent) -> None:
 		print('Double click -> exiting')
-		QtWidgets.qApp.quit()
+		QApplication.instance().quit()
 
 
 if __name__ == '__main__':
@@ -98,4 +97,4 @@ if __name__ == '__main__':
 	print(utils.welcome_message)
 	window = MainWindow()
 	window.show()
-	app.exec_()
+	app.exec()

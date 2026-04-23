@@ -1,8 +1,8 @@
-PyQt5
-opencv-python
-pytesseract
-mss
-numpy
-PyAutoGUI
-Pillow
-pynput
+PyQt6==6.*
+opencv-python==4.13.*
+pytesseract==0.3.*
+mss==10.1.*
+numpy==2.4.*
+PyAutoGUI==0.9.*
+Pillow==12.2.*
+pynput==1.8.*

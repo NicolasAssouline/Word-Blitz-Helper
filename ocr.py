@@ -18,7 +18,7 @@ def extract_text_from_board(img, verbose=False):
 
 	text_boxes = find_text_boxes(pre_processed)
 	if len(text_boxes) != 16:
-		print('Cannot recognize board, try again, ({} cells detected)'.format(len(text_boxes)))
+		print(f'Cannot recognize board, try again, ({len(text_boxes)} cells detected)')
 		return None
 
 	# must be done this way because the detected cells do not necessarily have the same y height
@@ -51,7 +51,7 @@ def extract_text_from_board(img, verbose=False):
 
 			if verbose:
 				if not os.path.exists(debug_output_dir): os.mkdir(debug_output_dir)
-				cv2.imwrite(os.path.join(debug_output_dir, 'row_{}_col_{}.png'.format(i, j)), image)
+				cv2.imwrite(os.path.join(debug_output_dir, f'row_{i}_col_{j}.png'), image)
 
 			# select the first one in case it detects more than one letter by accident
 			characters_table[-1].append(pytesseract.image_to_string(image, config='--psm 10')[0].upper())

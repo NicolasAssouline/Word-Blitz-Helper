@@ -29,18 +29,18 @@ def find_word_in_board(board, word, visited=None):
 def solve_blitz(board: List[List[str]], word_dictionary: set=None):
 	if word_dictionary is None:
 		word_dictionary = load_dictionary()
-	word_dictionary = [word.upper() for word in word_dictionary]
+	word_dictionary = {word.upper() for word in word_dictionary}
 
-	letters_in_board = set([item for sublist in board for item in sublist])
+	letters_in_board = set(item for sublist in board for item in sublist)
 
 	# pre-filter the dictionary to the set of all possible words
-	word_dictionary = filter(lambda entry: all([letter in letters_in_board for letter in entry]), word_dictionary)
+	words_in_board = filter(lambda entry: all(letter in letters_in_board for letter in entry), word_dictionary)
 
 	found_count = 0
 
 	paths = []
 	print('\nWords present on the board:')
-	for word in sorted(word_dictionary, key=len):
+	for word in sorted(words_in_board, key=len):
 		path = find_word_in_board(board, word)
 
 		if path is not None:
