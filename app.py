@@ -45,6 +45,32 @@ class MainWindow(QMainWindow):
 			self.mouse_start_pos = event.pos()
 		self.update()
 
+	def mouseMoveEvent(self, event: QMouseEvent) -> None:
+		if self.mouse_start_pos is None:
+			self.mouse_start_pos = event.pos()
+		self.mouse_curr_pos = event.pos()
+		self.update()
+
+	def paintEvent(self, event: QPaintEvent) -> None:
+		qp = QPainter()
+		qp.begin(self)
+
+		if self.mouse_start_pos is not None and self.mouse_curr_pos is not None:
+			qp.drawRect(QRect(self.mouse_start_pos.x(), self.mouse_start_pos.y(),
+							  self.mouse_curr_pos.x()-self.mouse_start_pos.x(),
+							  self.mouse_curr_pos.y()-self.mouse_start_pos.y()))
+
+			logger.debug(f'start: {(self.mouse_start_pos.x(), self.mouse_start_pos.y())}' +
+						 f'\tend: {(self.mouse_curr_pos.x(), self.mouse_curr_pos.y())}')
+		else:
+			qp.eraseRect(0, 0, self.screen_width, self.screen_height)
+
+		qp.end()
+
+	def mouseDoubleClickEvent(self, a0: QMouseEvent) -> None:
+		logger.info('Double click -> exiting')
+		QApplication.instance().quit()
+
 	def _start_solver(self):
 		if self.coords is None or self.coords[0] is None:
 			logger.error('No coordinates selected')
@@ -70,32 +96,6 @@ class MainWindow(QMainWindow):
 				                     coordinates[i][j][1] + self.coords[0].y())
 
 		click_paths(coordinates, paths)
-
-	def mouseMoveEvent(self, event: QMouseEvent) -> None:
-		if self.mouse_start_pos is None:
-			self.mouse_start_pos = event.pos()
-		self.mouse_curr_pos = event.pos()
-		self.update()
-
-	def paintEvent(self, event: QPaintEvent) -> None:
-		qp = QPainter()
-		qp.begin(self)
-
-		if self.mouse_start_pos is not None and self.mouse_curr_pos is not None:
-			qp.drawRect(QRect(self.mouse_start_pos.x(), self.mouse_start_pos.y(),
-							  self.mouse_curr_pos.x()-self.mouse_start_pos.x(),
-							  self.mouse_curr_pos.y()-self.mouse_start_pos.y()))
-
-			logger.debug(f'start: {(self.mouse_start_pos.x(), self.mouse_start_pos.y())}' +
-						 f'\tend: {(self.mouse_curr_pos.x(), self.mouse_curr_pos.y())}')
-		else:
-			qp.eraseRect(0, 0, self.screen_height, self.screen_width)
-
-		qp.end()
-
-	def mouseDoubleClickEvent(self, a0: QMouseEvent) -> None:
-		logger.info('Double click -> exiting')
-		QApplication.instance().quit()
 
 
 if __name__ == '__main__':

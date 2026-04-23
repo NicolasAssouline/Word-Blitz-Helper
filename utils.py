@@ -31,12 +31,12 @@ def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
         # start from the longest word
         for path in reversed(paths):
 
-            start = path.pop(0)
+            start, *rest = path
             pyautogui.moveTo(*coordinates[start[0]][start[1]], duration=DEFAULT_PAUSE_BETWEEN_ACTIONS)
             logger.debug(f'Moved cursor to initial position {coordinates[start[0]][start[1]]}', )
 
             pyautogui.mouseDown()
-            for coords in path:
+            for coords in rest:
                 pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=DEFAULT_PAUSE_BETWEEN_ACTIONS)
 
             pyautogui.mouseUp()

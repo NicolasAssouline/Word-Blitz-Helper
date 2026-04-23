@@ -8,7 +8,7 @@ from env import IMAGES_DEBUG_OUTPUT_DIR, DEBUG_MODE
 
 logger = logging.getLogger(__name__)
 
-replacements = {
+_replacements = {
 	'°': 'O',
 	'3': 'J',
 	'1': 'I'
@@ -67,8 +67,8 @@ def extract_text_from_board(img):
 def replace_common_mistakes(final_table):
 	for i in range(len(final_table)):
 		for j in range(len(final_table[i])):
-			if final_table[i][j] in replacements:
-				final_table[i][j] = replacements[final_table[i][j]]
+			if final_table[i][j] in _replacements:
+				final_table[i][j] = _replacements[final_table[i][j]]
 
 
 def pre_process_image(image, morph_size=(5, 5)):
