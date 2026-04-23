@@ -1,12 +1,15 @@
+import logging
 import time
 from typing import List, Tuple
 
-import mss
-import mss.tools
+import cv2
 import numpy
 import pyautogui
-from PIL import Image
 from pynput import keyboard
+
+from env import DEFAULT_WORD_DICTIONARY, DEFAULT_PAUSE_BETWEEN_ACTIONS, DEBUG_MODE
+
+logger = logging.getLogger(__name__)
 
 welcome_message = """
 |  |  __   __   __     __        ___ ___         __      __   __  __
@@ -23,60 +26,45 @@ To cancel the automatic solution input, press escape to terminate execution
 
 
 def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
-
-    with keyboard.Listener(on_press=lambda key: False,
-                           on_release=lambda key: False) as listener:
-        for path in reversed(paths):  # start from the longest word
+    # disable qt app keyboard listeners so events don't get triggered recursively by the solver
+    with keyboard.Listener(on_press=lambda key: False, on_release=lambda key: False) as listener:
+        # start from the longest word
+        for path in reversed(paths):
 
             start = path.pop(0)
-            pyautogui.moveTo(*coordinates[start[0]][start[1]], duration=0.1)
-            # print('moved cursor to ', *coordinates[start[0]][start[1]])
+            pyautogui.moveTo(*coordinates[start[0]][start[1]], duration=DEFAULT_PAUSE_BETWEEN_ACTIONS)
+            logger.debug(f'Moved cursor to initial position {coordinates[start[0]][start[1]]}', )
 
             pyautogui.mouseDown()
             for coords in path:
-                pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=0.1)
-                # print('moved cursor to ', *coordinates[coords[0]][coords[1]])
+                pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=DEFAULT_PAUSE_BETWEEN_ACTIONS)
 
             pyautogui.mouseUp()
-            time.sleep(0.1)
+            time.sleep(DEFAULT_PAUSE_BETWEEN_ACTIONS)
 
             if not listener.running:
-                print('Keyboard interrupt -> stopping execution...')
+                logger.warning('Keyboard interrupt -> stopping execution...')
                 return
 
 
 def take_screenshot(start, end):
-    with mss.mss() as sct:
-        monitor_number = 1
+    image = pyautogui.screenshot(region=(
+        start.x(), start.y(),
+        end.x() - start.x(), end.y() - start.y()
+    ))
 
-        if len(sct.monitors) <= 2:
-            image = pyautogui.screenshot(region=(
-                start.x(), start.y(),
-                end.x() - start.x(), end.y() - start.y()
-            ))
-        else:
-            # todo fix multi monitor screenshots
-            mon = sct.monitors[monitor_number]
 
-            # The screen part to capture
-            monitor = {
-                "top": mon["top"] + start.x(),
-                "left": mon["left"] + start.y(),
-                "width": end.x() - start.x(),
-                "height": end.y() - start.y(),
-                "mon": monitor_number,
-            }
+    image = cv2.cvtColor(numpy.array(image), cv2.COLOR_RGB2BGR)
 
-            print('Screenshot taken using monitor', monitor)
-            sct_img = sct.grab(monitor)
-
-            image = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
-    image = numpy.array(image)
-    image = image[:, :, ::-1].copy()
-    # cv2.imshow('screenshot', image)
+    if DEBUG_MODE:
+        cv2.imshow('screenshot', image)
     return image
 
 
-def load_dictionary(dictionary_path='./dictionaries/corncob_caps.txt'):
+def load_dictionary(dictionary_path=DEFAULT_WORD_DICTIONARY, max_word_length = 16):
     with open(dictionary_path) as file:
-        return [word.strip() for word in file.readlines() if 1 < len(word.strip()) <= 16 and not word.startswith('#')]
+        return [word.strip() for word in file.readlines() if 1 < len(word.strip()) <= max_word_length and not word.startswith('#')]
+
+
+def grid_to_string(grid: List[List[str]]) -> str:
+    return '\n'.join(' '.join(row) for row in grid)

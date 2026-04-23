@@ -1,11 +1,21 @@
+import logging
 from typing import List
 
+from env import LOG_LEVEL
 from utils import load_dictionary
 
+logger = logging.getLogger(__name__)
+
+
+_VALID_DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+def _in_bounds(board, x, y):
+	return 0 <= x < len(board) and 0 <= y < len(board[x])
 
 def find_word_in_board(board, word, visited=None):
 	if visited is None:
-		if len(word) == 0: raise ValueError('The length of the word must be greater than zero')
+		if len(word) == 0:
+			raise ValueError('The length of the word must be greater than zero')
 
 		for i in range(len(board)):
 			for j in range(len(board[i])):
@@ -18,11 +28,11 @@ def find_word_in_board(board, word, visited=None):
 		return visited
 
 	curr_x, curr_y = visited[-1]
-	for i in range(max(0, curr_x-1), min(3, curr_x+1)+1):
-		for j in range(max(0, curr_y-1), min(3, curr_y+1)+1):
-			if board[i][j] == word[0] and (i, j) not in visited:
-				visited.append((i, j))
-				return find_word_in_board(board, word[1:], visited.copy())
+	for dx, dy in _VALID_DIRECTIONS:
+		new_x, new_y = curr_x + dx, curr_y + dy
+		if _in_bounds(board, new_x, new_y) and board[new_x][new_y] == word[0] and (new_x, new_y) not in visited:
+			visited.append((new_x, new_y))
+			return find_word_in_board(board, word[1:], visited.copy())
 	return None
 
 
@@ -36,28 +46,30 @@ def solve_blitz(board: List[List[str]], word_dictionary: set=None):
 	# pre-filter the dictionary to the set of all possible words
 	words_in_board = filter(lambda entry: all(letter in letters_in_board for letter in entry), word_dictionary)
 
-	found_count = 0
+	logger.info('Words present on the board:')
 
+	words_found = 0
 	paths = []
-	print('\nWords present on the board:')
 	for word in sorted(words_in_board, key=len):
 		path = find_word_in_board(board, word)
+		if path is None:
+			continue
 
-		if path is not None:
-			found_count += 1
-			print('{:17}'.format(word), 'path =', path)
-			paths.append(path)
+		words_found += 1
+		logger.info(f'{word:17} path = {path}')
+		paths.append(path)
 
-	print('\nWords found:', found_count)
+	logger.info(f'Words found: {words_found}')
 	return paths
 
 # test
 if __name__ == '__main__':
-	board = [
+	logging.basicConfig(level=LOG_LEVEL)
+	example_board = [
 		['O', 'V', 'A', 'O'],
 		['R', 'U', 'D', 'V'],
 		['O', 'V', 'T', 'O'],
 		['R', 'E', 'G', 'K']
 	]
 
-	solve_blitz(board)
+	solve_blitz(example_board)
