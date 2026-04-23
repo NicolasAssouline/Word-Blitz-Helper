@@ -11,7 +11,10 @@ logger = logging.getLogger(__name__)
 _replacements = {
 	'°': 'O',
 	'3': 'J',
-	'1': 'I'
+	'1': 'I',
+	'|': 'I',
+	'7': 'T',
+	'4': 'A'
 }
 
 

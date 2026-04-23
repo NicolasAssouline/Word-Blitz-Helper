@@ -40,7 +40,7 @@ def click_paths(coordinates: List, paths: List[List[Tuple[int, int]]]):
                 pyautogui.moveTo(*coordinates[coords[0]][coords[1]], duration=DEFAULT_PAUSE_BETWEEN_ACTIONS)
 
             pyautogui.mouseUp()
-            time.sleep(DEFAULT_PAUSE_BETWEEN_ACTIONS)
+            time.sleep(DEFAULT_PAUSE_BETWEEN_ACTIONS * 2)
 
             if not listener.running:
                 logger.warning('Keyboard interrupt -> stopping execution...')

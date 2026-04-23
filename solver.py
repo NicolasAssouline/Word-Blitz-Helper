@@ -9,20 +9,6 @@ logger = logging.getLogger(__name__)
 
 _VALID_DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
-def find_word_in_board(board, word):
-	if len(word) == 0:
-		raise ValueError('The length of the word must be greater than zero')
-
-	for i in range(len(board)):
-		for j in range(len(board[i])):
-			if board[i][j] != word[0]:
-				continue
-
-			path = _find_word(board, word[1:], [(i, j)])
-			if path is not None:
-				return path
-	return None
-
 def solve_blitz(board: List[List[str]], word_dictionary: set=None):
 	if word_dictionary is None:
 		word_dictionary = load_dictionary()
@@ -49,6 +35,20 @@ def solve_blitz(board: List[List[str]], word_dictionary: set=None):
 	logger.info(f'Words found: {words_found}')
 	return paths
 
+def find_word_in_board(board, word):
+	if len(word) == 0:
+		raise ValueError('The length of the word must be greater than zero')
+
+	for i in range(len(board)):
+		for j in range(len(board[i])):
+			if board[i][j] != word[0]:
+				continue
+
+			path = _find_word(board, word[1:], [(i, j)])
+			if path is not None:
+				return path
+	return None
+
 
 def _in_bounds(board, x, y):
 	return 0 <= x < len(board) and 0 <= y < len(board[x])
@@ -62,9 +62,11 @@ def _find_word(board, word, visited):
 	for dx, dy in _VALID_DIRECTIONS:
 		new_x, new_y = curr_x + dx, curr_y + dy
 		if _in_bounds(board, new_x, new_y) and board[new_x][new_y] == word[0] and (new_x, new_y) not in visited:
-			path = _find_word(board, word[1:], visited + [(new_x, new_y)])
+			visited.append((new_x, new_y))
+			path = _find_word(board, word[1:], visited)
 			if path is not None:
 				return path
+			visited.pop()
 	return None
 
 # test
